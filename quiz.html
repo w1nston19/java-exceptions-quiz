@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Java Exceptions Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f4f7;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 400px;
+      text-align: center;
+      display: none;
+    }
+    button {
+      margin: 6px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .checked { background: #e0f7fa; }
+    .unchecked { background: #ffe0b2; }
+    .error { background: #ffcdd2; }
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .correct { color: green; }
+    .wrong { color: red; }
+    .next {
+      background: #c5e1a5;
+      margin-top: 15px;
+    }
+    img {
+      margin-top: 10px;
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <h2>Java Exception Types Quiz 🧠</h2>
+  <div id="quiz"></div>
+  <div id="final" class="card hidden">
+    <h3>Quiz complete!</h3>
+    <p id="scoreText"></p>
+  </div>
+
+  <script>
+    const data = [
+      { q: "You enter the wrong password", answer: "Checked", "t": "AuthenticationException" },
+      { q: "./examples/1.png", answer: "Error",  "t": "StackOverflowError"},
+      { q: "You try to open a file that doesn’t exist", answer: "Checked", "t" : "FileNotFoundException" },
+      { q: "int x = y / 0;", answer: "Unchecked", "t" : "ArithmeticException" },
+      { q: "Person p; \n p.print()", answer: "Unchecked", "t" : "NullPointerException" },
+      { q: "You try to create a file, but your disk is full with memes and cat videos.", answer: "Checked", "t": "IOException" },
+      { q: "Casting a Cat into a Dog.", answer: "Unchecked", "t" : "ClassCastException" },
+      { q: "int[] numbers = new int[5]; \n IO.println(numbers[9]);", answer: "Unchecked", "t" : "ArrayIndexOutOfBoundsException" },
+      { q: "./examples/2.png", answer: "Error",  "t": "OutOfMemoryError"},
+      { q: "You start a download process, but it takes too long.", answer: "Checked", "t": "TimeoutException" },
+    ];
+
+    const quiz = document.getElementById("quiz");
+    const final = document.getElementById("final");
+    const scoreText = document.getElementById("scoreText");
+    let score = 0;
+
+    data.forEach((item, i) => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      // Question container
+      const questionContainer = document.createElement("div");
+
+      // Attempt to load question as image
+      const img = document.createElement("img");
+      img.src = item.q;
+      img.onload = () => {
+        questionContainer.innerHTML = "";
+        questionContainer.appendChild(img);
+      };
+      img.onerror = () => {
+        questionContainer.innerHTML = `<h4>${i + 1}. ${item.q}</h4>`;
+      };
+
+      card.appendChild(questionContainer);
+
+      const buttonsContainer = document.createElement("div");
+      buttonsContainer.innerHTML = `
+        <button class="checked">Checked</button>
+        <button class="unchecked">Unchecked</button>
+        <button class="error">Error</button>
+      `;
+      card.appendChild(buttonsContainer);
+
+      const message = document.createElement("div");
+      message.className = "message";
+      card.appendChild(message);
+
+      const resultImage = document.createElement("img");
+      resultImage.className = "result-image hidden";
+      card.appendChild(resultImage);
+
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "Next ➡️";
+      nextBtn.className = "next hidden";
+      card.appendChild(nextBtn);
+
+      quiz.appendChild(card);
+
+      const buttons = buttonsContainer.querySelectorAll("button");
+      buttons.forEach(b => {
+        b.addEventListener("click", () => {
+          buttons.forEach(btn => btn.disabled = true);
+
+          let folder;
+          if (b.textContent === item.answer) {
+            message.textContent = "✅ Correct! " + item.answer + " Exception. (" + item.t + ").";
+            message.className = "message correct";
+            folder = "correct";
+            score++;
+          } else {
+            message.textContent = "❌ Wrong! It's a " + item.answer + " Exception. (" + item.t + " ).";
+            message.className = "message wrong";
+            folder = "wrong";
+          }
+
+          resultImage.src = `${folder}/${i + 1}.jpg`;
+          resultImage.classList.remove("hidden");
+          nextBtn.classList.remove("hidden");
+        });
+      });
+
+      nextBtn.addEventListener("click", () => showQuestion(i + 1));
+    });
+
+    function showQuestion(index) {
+  const cards = quiz.querySelectorAll(".card");
+  cards.forEach(c => (c.style.display = "none"));
+
+  if (index < data.length) {
+    cards[index].style.display = "block";
+  } else {
+    quiz.style.display = "none";
+    final.classList.remove("hidden");
+    final.style.display = "block"; // <-- add this
+    scoreText.textContent = `You got ${score} out of ${data.length} correct.`;
+  }
+}
+
+
+
+    showQuestion(0);
+  </script>
+
+</body>
+</html>
